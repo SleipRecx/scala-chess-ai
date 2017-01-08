@@ -158,13 +158,13 @@ class Search {
       }
     }
 
-    score += PieceValues.KingValue * (wK-bK)
-    score += PieceValues.QueenValue * (wQ-bQ)
-    score += PieceValues.RookValue * (wR-bR)
-    score += PieceValues.BishopValue * (wB-bB)
-    score += PieceValues.KnightValue * (wN-bN)
-    score += PieceValues.PawnValue * (wP-bP)
-    score += PieceValues.MobilityValue * (wM-bM)
+    score += PieceValues.value(Type.King) * (wK-bK)
+    score += PieceValues.value(Type.Queen) * (wQ-bQ)
+    score += PieceValues.value(Type.Rook) * (wR-bR)
+    score += PieceValues.value(Type.Bishop) * (wB-bB)
+    score += PieceValues.value(Type.Knight) * (wN-bN)
+    score += PieceValues.value(Type.Pawn) * (wP-bP)
+    score += PieceValues.mobility * (wM-bM)
 
     score
   }
