@@ -20,7 +20,7 @@
 #### Search Algorithm 
 - [x] Move Generation
 - [x] Adversial Search (MinMax)
-- [x] Alpha Beta Improvment
+- [x] Alpha Beta Improvement
 - [x] Iterative Deepening
 - [ ] Time Management
 - [ ] Transposition Tables
