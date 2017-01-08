@@ -1,19 +1,22 @@
 package AI.Helpers
+import Game.Helpers.Type
+import Game.Helpers.Type.Type
 
 object PieceValues {
 
-  def KingValue: Integer =  20000
 
-  def QueenValue: Integer = 900
+  def value(typ: Type): Integer ={
+    typ match{
+      case Type.Pawn => 100
+      case Type.Knight => 320
+      case Type.Bishop => 330
+      case Type.Rook => 500
+      case Type.Queen => 900
+      case Type.King => 20000
+    }
+  }
 
-  def RookValue: Integer = 500
 
-  def BishopValue: Integer = 330
-
-  def KnightValue: Integer = 320
-
-  def PawnValue: Integer = 100
-
-  def MobilityValue: Integer = 10
+  def mobility: Integer = 10
 
 }
