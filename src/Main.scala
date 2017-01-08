@@ -1,6 +1,4 @@
-import AI.PieceTable
 import Game.{Board, Game}
-
 
 object Main {
 
