@@ -1,7 +1,7 @@
 package Pieces
 
-import Helpers.Color.Color
-import Helpers.Type.Type
+import Game.Helpers.Color.Color
+import Game.Helpers.Type.Type
 import Game._
 import Helpers.{Color, Type}
 

@@ -3,9 +3,9 @@ package AI
 import java.time.{Duration, LocalTime}
 
 import Game.Board
-import Helpers.Color.Color
-import Helpers.Type.Type
-import Helpers._
+import Game.Helpers.Color.Color
+import Game.Helpers.Type.Type
+import Game.Helpers._
 
 import scala.collection.mutable.ArrayBuffer
 
