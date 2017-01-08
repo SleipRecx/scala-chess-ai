@@ -9,14 +9,6 @@ import Game.Helpers._
 
 import scala.collection.mutable.ArrayBuffer
 
-/*
-TODO 1: Get appropriate moves from the AI using the MiniMax algorithm (DONE)
-TODO 2: Optimize by using alpha beta pruning on top of MiniMax (DONE)
-TODO 3: Optimize alpha beta pruning with move ordering and iterative deepening
-TODO 4: Get rid of the horizon effect e.g quiescence search
-TODO 5: Write a better evaluation function for a chessboard state (PARTIAL)
- */
-
 class Search {
   val zobrist = new Zobrist
   var transTable: Map[Long,((Integer, Integer), (Integer, Integer))] = Map()
