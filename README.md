@@ -8,8 +8,8 @@
 #### Features
 - [x] Board
 - [x] Pieces
+- [x] Pseudo-Legal Moves
 - [x] Legal Moves
-- [x] Moves Not Causing Check
 - [ ] Promoting Pawns
 - [ ] Casteling Logic
 - [ ] En Passant
