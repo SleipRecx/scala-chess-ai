@@ -2,6 +2,8 @@ package AI
 
 import java.time.{Duration, LocalTime}
 
+import AI.Helpers.PieceTable
+import AI.Helpers.PieceValues
 import Game.Board
 import Game.Helpers.Color.Color
 import Game.Helpers.Type.Type
@@ -156,13 +158,13 @@ class Search {
       }
     }
 
-    score += PieceTable.KingValue * (wK-bK)
-    score += PieceTable.QueenValue * (wQ-bQ)
-    score += PieceTable.RookValue * (wR-bR)
-    score += PieceTable.BishopValue * (wB-bB)
-    score += PieceTable.KnightValue * (wN-bN)
-    score += PieceTable.PawnValue * (wP-bP)
-    score += PieceTable.MobilityValue * (wM-bM)
+    score += PieceValues.KingValue * (wK-bK)
+    score += PieceValues.QueenValue * (wQ-bQ)
+    score += PieceValues.RookValue * (wR-bR)
+    score += PieceValues.BishopValue * (wB-bB)
+    score += PieceValues.KnightValue * (wN-bN)
+    score += PieceValues.PawnValue * (wP-bP)
+    score += PieceValues.MobilityValue * (wM-bM)
 
     score
   }
