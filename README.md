@@ -39,6 +39,7 @@
 - [x] Adversial Search (MinMax)
 - [x] Alpha Beta Improvment
 - [x] Iterative Deepening
+- [ ] Time Management
 - [ ] Transposition Tables
 - [ ] Principle Variation Search
 
