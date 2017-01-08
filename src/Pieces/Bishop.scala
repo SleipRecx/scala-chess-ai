@@ -8,7 +8,6 @@ import Helpers.Type
 
 class Bishop(color: Color) extends Piece(color: Color) {
 
-  override val pieceValue: Integer = 330
 
   def pieceType: Type = Type.Bishop
 

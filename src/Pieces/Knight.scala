@@ -9,8 +9,6 @@ class Knight(color: Color) extends Piece(color: Color) {
 
   def pieceType: Type = Type.Knight
 
-  override val pieceValue: Integer = 320
-
 
   override
   def isValidMoveSet(state: Array[Array[Spot]], from: (Integer,Integer), to: (Integer,Integer)): Boolean = {

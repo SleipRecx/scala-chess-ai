@@ -10,8 +10,6 @@ class King(color: Color) extends Piece(color: Color) {
 
   def pieceType: Type = Type.King
 
-  override val pieceValue: Integer = 20000
-
   override
   def isValidMoveSet(state: Array[Array[Spot]], from: (Integer,Integer), to: (Integer,Integer)): Boolean = {
 
