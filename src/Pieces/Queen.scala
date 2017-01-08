@@ -7,7 +7,6 @@ import Helpers.Type
 
 class Queen(color: Color) extends Piece(color: Color) {
 
-  override val pieceValue: Integer = 900
 
   def pieceType: Type = Type.Queen
 

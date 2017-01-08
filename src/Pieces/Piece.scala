@@ -9,8 +9,6 @@ abstract class Piece(_color: Color) {
 
   var _moved: Boolean = false
 
-  val pieceValue: Integer
-
   def moved: Boolean = _moved
 
   def moved_=(value: Boolean): Unit = _moved = value

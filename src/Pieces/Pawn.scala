@@ -7,7 +7,6 @@ import Helpers.{Color, Type}
 
 class Pawn(color: Color) extends Piece(color: Color) {
 
-  override val pieceValue: Integer = 100
 
   def pieceType: Type = Type.Pawn
 

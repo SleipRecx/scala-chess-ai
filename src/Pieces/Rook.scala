@@ -7,8 +7,6 @@ import Helpers.Type
 
 class Rook(color: Color) extends Piece(color: Color) {
 
-  override val pieceValue: Integer = 500
-
   def pieceType: Type = Type.Rook
 
 
