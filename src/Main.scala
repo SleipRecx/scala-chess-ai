@@ -1,5 +1,5 @@
+import AI.PieceTable
 import Game.{Board, Game}
-import Helpers.{Table, Zobrist}
 
 
 object Main {
