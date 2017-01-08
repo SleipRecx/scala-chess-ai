@@ -1,6 +1,6 @@
-package Helpers
+package AI
 
-object Table{
+object PieceTable{
 
   private val whitePawn = Array(
     Array(1000,0,0,0,0,0,0,0),
@@ -54,14 +54,6 @@ object Table{
     Array(-20,-10,-10,-5,-5,-10,-10,-20))
 
 
-  def printArray(array: Array[Array[Int]]) : Unit = {
-    for(i <- 7 to 0 by -1){
-      println()
-      for(j <- array.indices){
-        print(array(i)(j) + " , ")
-      }
-    }
-  }
 
   def mirror(array: Array[Array[Int]]) : Array[Array[Int]] = {
     val mirror = array.clone()

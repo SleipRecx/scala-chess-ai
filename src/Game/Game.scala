@@ -3,12 +3,13 @@ package Game
 import java.time.{Duration, LocalTime}
 import java.util.Scanner
 
-import Helpers.{Color, Table, Zobrist}
+import AI.Search
+import Helpers.Color
 import Helpers.Color.Color
 
 class Game {
   val board = new Board()
-  val ai = new AI()
+  val ai = new Search()
   board.initBoard()
 
   val translation = Map('a' -> 0, 'b' -> 1,'c' -> 2, 'd' -> 3,'e' -> 4, 'f' -> 5, 'g' -> 6,'h' -> 7)

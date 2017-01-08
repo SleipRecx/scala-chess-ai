@@ -1,4 +1,4 @@
-package Helpers
+package Game.Helpers
 
 object Type extends Enumeration {
 

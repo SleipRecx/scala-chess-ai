@@ -1,22 +1,15 @@
-package Game
+package AI
 
 import java.time.{Duration, LocalTime}
 
-import Helpers.Color.Color
-import Helpers._
-import Helpers.Type.Type
+import Game.Board
+import Game.Helpers.Color.Color
+import Game.Helpers.Type.Type
+import Game.Helpers._
 
 import scala.collection.mutable.ArrayBuffer
 
-/*
-TODO 1: Get appropriate moves from the AI using the MiniMax algorithm (DONE)
-TODO 2: Optimize by using alpha beta pruning on top of MiniMax (DONE)
-TODO 3: Optimize alpha beta pruning with move ordering and iterative deepening
-TODO 4: Get rid of the horizon effect e.g quiescence search
-TODO 5: Write a better evaluation function for a chessboard state (PARTIAL)
- */
-
-class AI {
+class Search {
   val zobrist = new Zobrist
   var transTable: Map[Long,((Integer, Integer), (Integer, Integer))] = Map()
 
@@ -114,48 +107,48 @@ class AI {
             case Type.Pawn =>
               if(current.piece.color == Color.White){
                 wP += 1
-                score += Table.WhitePawn(i)(j)
+                score += PieceTable.WhitePawn(i)(j)
               }
               else {
                 bP +=1
-                score +=  - Table.BlackPawn(i)(j)
+                score +=  - PieceTable.BlackPawn(i)(j)
               }
             case Type.Queen =>
               if(current.piece.color == Color.White){
                 wQ +=1
-                score += Table.WhiteQueen(i)(j)
+                score += PieceTable.WhiteQueen(i)(j)
 
               }
               else {
                 bQ +=1
-                score += - Table.BlackQueen(i)(j)
+                score += - PieceTable.BlackQueen(i)(j)
               }
             case Type.Bishop =>
               if(current.piece.color == Color.White){
                 wB +=1
-                score += Table.WhiteBishop(i)(j)
+                score += PieceTable.WhiteBishop(i)(j)
               }
               else {
                 bB +=1
-                score += - Table.BlackBishop(i)(j)
+                score += - PieceTable.BlackBishop(i)(j)
               }
             case Type.Knight =>
               if(current.piece.color == Color.White){
                 wN +=1
-                score += Table.WhiteKnight(i)(j)
+                score += PieceTable.WhiteKnight(i)(j)
               }
               else {
                 bN +=1
-                score += - Table.BlackKnight(i)(j)
+                score += - PieceTable.BlackKnight(i)(j)
               }
             case Type.Rook =>
               if(current.piece.color == Color.White){
                 wR +=1
-                score += Table.WhiteRook(i)(j)
+                score += PieceTable.WhiteRook(i)(j)
               }
               else {
                 bR +=1
-                score += - Table.BlackRook(i)(j)
+                score += - PieceTable.BlackRook(i)(j)
               }
             case Type.King => if(current.piece.color == Color.White){wK +=1} else {bK +=1}
           }
@@ -163,13 +156,13 @@ class AI {
       }
     }
 
-    score += Table.KingValue * (wK-bK)
-    score += Table.QueenValue * (wQ-bQ)
-    score += Table.RookValue * (wR-bR)
-    score += Table.BishopValue * (wB-bB)
-    score += Table.KnightValue * (wN-bN)
-    score += Table.PawnValue * (wP-bP)
-    score += Table.MobilityValue * (wM-bM)
+    score += PieceTable.KingValue * (wK-bK)
+    score += PieceTable.QueenValue * (wQ-bQ)
+    score += PieceTable.RookValue * (wR-bR)
+    score += PieceTable.BishopValue * (wB-bB)
+    score += PieceTable.KnightValue * (wN-bN)
+    score += PieceTable.PawnValue * (wP-bP)
+    score += PieceTable.MobilityValue * (wM-bM)
 
     score
   }

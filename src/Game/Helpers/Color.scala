@@ -1,4 +1,4 @@
-package Helpers
+package Game.Helpers
 
 object Color extends Enumeration {
 

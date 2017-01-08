@@ -1,4 +1,4 @@
-package Helpers
+package AI
 
 class ZEntry(move: ((Integer,Integer),(Integer,Integer)), value: Double, valueType: String,depth: Integer) {
 

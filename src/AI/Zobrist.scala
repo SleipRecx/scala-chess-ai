@@ -1,7 +1,9 @@
-package Helpers
+package AI
 
 import java.security.SecureRandom
+
 import Game.Board
+import Game.Helpers.{Color, Type}
 
 class Zobrist {
 
