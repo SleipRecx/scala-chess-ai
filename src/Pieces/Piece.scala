@@ -5,29 +5,24 @@ import Game.Helpers.Type.Type
 import Game._
 
 
-abstract class Piece(_color: Color) {
+abstract class Piece(c: Color) {
 
-  var _moved: Boolean = false
+  var moved = false
 
-  def moved: Boolean = _moved
-
-  def moved_=(value: Boolean): Unit = _moved = value
-
-  def color: Color = _color
+  def color: Color = c
 
   def pieceType: Type
 
-  def blockedByPiece(state: Array[Array[Spot]], from: (Integer,Integer), to: (Integer,Integer)): Boolean
+  def blockedByPiece(state: Array[Array[Spot]], move: Move): Boolean
 
-
-  def isValidMoveSet(state: Array[Array[Spot]], from: (Integer,Integer), to: (Integer,Integer)): Boolean = {
-    if (blockedByPiece(state, from, to)) {
-      return false
-    }
-    true
+  def isValidMoveSet(state: Array[Array[Spot]], move: Move): Boolean = {
+    if (blockedByPiece(state, move)) false
+    else true
   }
 
-  def isBlockedDiagonal(state: Array[Array[Spot]], from: (Integer,Integer), to: (Integer,Integer)): Boolean ={
+  def isBlockedDiagonal(state: Array[Array[Spot]], move: Move): Boolean ={
+    val from = move.from
+    val to = move.to
     var x_dir, y_dir = 1
 
     if(to._1 - from._1 < 0) {
@@ -55,7 +50,10 @@ abstract class Piece(_color: Color) {
   }
 
 
-  def isBlockedHorisontalOrVertical(state: Array[Array[Spot]], from: (Integer,Integer), to: (Integer,Integer)): Boolean ={
+  def isBlockedHorisontalOrVertical(state: Array[Array[Spot]], move: Move): Boolean ={
+    val from = move.from
+    val to = move.to
+
     if (to._2 != from._2){
       if(to._2 > from._2){
         for(i <- from._2 + 1 until to._2 by 1){

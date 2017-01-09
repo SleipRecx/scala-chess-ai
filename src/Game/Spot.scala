@@ -2,13 +2,11 @@ package Game
 
 import Pieces.Piece
 
-class Spot(x: Integer, y: Integer) {
-
-  def getX: Integer = this.x
-
-  def getY: Integer = this.y
+class Spot(c: (Int,Int)) {
 
   var piece: Piece = _
+
+  def cord: (Int,Int) = this.c
 
   def addPiece(piece: Piece): Unit = {
     this.piece = piece

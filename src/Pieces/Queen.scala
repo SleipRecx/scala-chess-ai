@@ -7,33 +7,28 @@ import Helpers.Type
 
 class Queen(color: Color) extends Piece(color: Color) {
 
-
   def pieceType: Type = Type.Queen
 
-  def blockedByPiece(state: Array[Array[Spot]], from: (Integer,Integer), to: (Integer,Integer)): Boolean = {
+  def blockedByPiece(state: Array[Array[Spot]], move: Move): Boolean = {
 
-    val x_diff = Math.abs(to._1 - from._1)
-    val y_diff = Math.abs(to._2 - from._2)
+    val x_diff = Math.abs(move.to._1 - move.from._1)
+    val y_diff = Math.abs(move.to._2 - move.from._2)
 
-    if (x_diff == y_diff) {
-      return isBlockedDiagonal(state,from,to)
-    }
+    if (x_diff == y_diff) isBlockedDiagonal(state,move)
+    else isBlockedHorisontalOrVertical(state,move)
 
-    isBlockedHorisontalOrVertical(state,from,to)
   }
 
 
   override
-  def isValidMoveSet(state: Array[Array[Spot]], from: (Integer,Integer), to: (Integer,Integer)): Boolean = {
+  def isValidMoveSet(state: Array[Array[Spot]], move: Move): Boolean = {
 
-    if (!super.isValidMoveSet(state,from,to)) { return false }
+    if (!super.isValidMoveSet(state,move)) return false
 
-    val x_diff = Math.abs(to._1 - from._1)
-    val y_diff = Math.abs(to._2 - from._2)
+    val x_diff = Math.abs(move.to._1 - move.from._1)
+    val y_diff = Math.abs(move.to._2 - move.from._2)
 
-    if(!(x_diff == y_diff) && !(to._1 == from._1) && !(to._2 == from._2)){
-      return false
-    }
+    if(!(x_diff == y_diff) && !(move.to._1 == move.from._1) && !(move.to._2 == move.from._2)) return false
 
     true
   }

@@ -36,10 +36,10 @@ class Game {
 
       while (true) {
         val m = ai.getAction(board, Color.White)
-        board.movePiece(m._1, m._2)
+        board.movePiece(m)
         board.printBoard()
         val m2 = ai.getAction(board, Color.Black)
-        board.movePiece(m2._1, m2._2)
+        board.movePiece(m2)
         board.printBoard()
       }
     }

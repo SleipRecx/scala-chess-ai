@@ -5,8 +5,7 @@ import java.security.SecureRandom
 import Game.Board
 import Game.Helpers.{Color, Type}
 
-class Zobrist {
-
+class ZHash {
   val zArray: Array[Array[Array[Array[Long]]]] = Array.ofDim[Long](2, 6, 8, 8)
   val zBlackMove: Long = random64
   fillArray()
@@ -28,7 +27,7 @@ class Zobrist {
       }
   }
 
-  def getZobristHash(board: Board): Long = {
+  def hashBoard(board: Board): Long = {
     var key: Long = 0
     for (i <- board.state.indices) {
       for (j <- board.state.indices) {
