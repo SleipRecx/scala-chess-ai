@@ -13,23 +13,7 @@ class Board{
   var turn: Color = Color.White
   var state: Array[Array[Spot]] = setupChessBoard
 
-  def switchTurn(): Unit = {
-     turn = if(turn == Color.White) Color.Black else Color.White
-  }
-
-  def getAllOccupiedSpotsByColor(c: Color): ArrayBuffer[Spot] = {
-    var spots = ArrayBuffer[Spot]()
-    state.foreach(e1 => e1.foreach(e2 => if(e2.isOccupied) if(e2.piece.color == c) spots += e2))
-    spots
-  }
-
-  def getAllSpots: ArrayBuffer[Spot] = {
-    var spots = ArrayBuffer[Spot]()
-    state.foreach(e1 => e1.foreach(e2 => spots += e2))
-    spots
-  }
-
-  def setupChessBoard: Array[Array[Spot]] = {
+  private def setupChessBoard: Array[Array[Spot]] = {
     state = Array.ofDim(RowCount, ColCount)
 
     for(i <- 0 until RowCount){
@@ -66,6 +50,48 @@ class Board{
     state
   }
 
+  private def switchTurn(): Unit = {
+     turn = if(turn == Color.White) Color.Black else Color.White
+  }
+
+  private def isBoardInCheck(state: Array[Array[Spot]], color: Color): Boolean = {
+    var king: (Integer,Integer) = (0,0)
+    var inCheck = false
+
+    for(i <- state.indices){
+      for(j <- state.indices){
+        if(state(i)(j).piece != null) {
+          if (state(i)(j).piece.pieceType == Type.King && color == state(i)(j).piece.color) {
+            king = (i, j)
+          }
+        }
+      }
+    }
+
+    for(i <- state.indices) {
+      for (j <- state.indices) {
+        if (state(i)(j).isOccupied && state(i)(j).piece.color != color) {
+          if (state(i)(j).piece.isValidMoveSet(state, new Move((i,j),(king._1, king._2)))) {
+            inCheck = true
+          }
+        }
+      }
+    }
+    inCheck
+  }
+
+  def getAllOccupiedSpotsByColor(c: Color): ArrayBuffer[Spot] = {
+    var spots = ArrayBuffer[Spot]()
+    state.foreach(e1 => e1.foreach(e2 => if(e2.isOccupied) if(e2.piece.color == c) spots += e2))
+    spots
+  }
+
+  def getAllSpots: ArrayBuffer[Spot] = {
+    var spots = ArrayBuffer[Spot]()
+    state.foreach(e1 => e1.foreach(e2 => spots += e2))
+    spots
+  }
+
   def cloneBoardState(): Array[Array[Spot]] = {
     val copyState: Array[Array[Spot]] = Array.ofDim[Spot](8,8)
     for(i <- 0 until ColCount){
@@ -85,32 +111,6 @@ class Board{
       }
     }
     copyState
-  }
-
-  def isBoardInCheck(state: Array[Array[Spot]], color: Color): Boolean = {
-    var king: (Integer,Integer) = (0,0)
-    var inCheck = false
-
-    for(i <- state.indices){
-      for(j <- state.indices){
-        if(state(i)(j).piece != null) {
-          if (state(i)(j).piece.pieceType == Type.King && color == state(i)(j).piece.color) {
-            king = (i, j)
-          }
-        }
-      }
-    }
-
-    for(i <- state.indices) {
-      for (j <- state.indices) {
-        if (state(i)(j).isOccupied && state(i)(j).piece.color != color) {
-          if (state(i)(j).piece.isValidMoveSet(state, new Move((i,j),(king._1, king._2)))) {
-              inCheck = true
-          }
-        }
-      }
-    }
-    inCheck
   }
 
   def printChessBoard(): Unit = {
@@ -156,15 +156,6 @@ class Board{
 
     if (isBoardInCheck(state,color)) true
     else false
-  }
-
-  def getColorFromPiece(from: (Int, Int)): Color = {
-    if(state(from._1)(from._2).isOccupied){
-      state(from._1)(from._2).piece.color
-    }
-    else{
-      throw new IllegalArgumentException("no piece on that square")
-    }
   }
 
   def isLegalMove(m: Move): Boolean = {
