@@ -4,6 +4,7 @@
 
 
 ## Game
+
 #### Features
 - [x] Board
 - [x] Pieces
@@ -15,6 +16,22 @@
 
 
 ## Artificial Intelligence
+
+#### Search Algorithm 
+- [x] Move Generation
+- [x] Adversial Search (MinMax)
+- [x] Alpha Beta Improvment
+- [x] Iterative Deepening
+- [ ] Time Management
+- [ ] Transposition Tables
+- [ ] Principle Variation Search
+
+#### Move Ordering
+- [x] Killer Heuristic
+- [ ] History Heuristic
+- [ ] Hash Move
+- [ ] PV - Move
+
 #### Evalution Function
 - [x] Piece Value
 - [x] Mobility Score
@@ -26,22 +43,6 @@
 - [ ] Trapped Pieces 
 - [ ] Passed Pawns
 
-
-#### Move Ordering
-- [x] Killer Heuristic
-- [ ] History Heuristic
-- [ ] Hash Move
-- [ ] PV - Move
-
-
-#### Search Algorithm 
-- [x] Move Generation
-- [x] Adversial Search (MinMax)
-- [x] Alpha Beta Improvment
-- [x] Iterative Deepening
-- [ ] Time Management
-- [ ] Transposition Tables
-- [ ] Principle Variation Search
 
 
 
