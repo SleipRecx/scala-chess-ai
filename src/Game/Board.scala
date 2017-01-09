@@ -4,17 +4,14 @@ import Helpers._
 import Helpers.Color
 import Helpers.Color.Color
 import Pieces._
-
 import scala.collection.mutable.ArrayBuffer
 
 
 class Board{
 
-  val NUMBER_OF_ROWS, NUMBER_OF_COLS = 8
-
-  var state: Array[Array[Spot]] = Array.ofDim[Spot](8, 8)
+  val RowCount, ColCount = 8
   var turn: Color = Color.White
-  initBoard()
+  var state: Array[Array[Spot]] = setupChessBoard
 
   def switchTurn(): Unit = {
      turn = if(turn == Color.White) Color.Black else Color.White
@@ -32,9 +29,11 @@ class Board{
     spots
   }
 
-  def initBoard(): Unit = {
-    for(i <- 0 until NUMBER_OF_COLS){
-      for(j <- 0 until NUMBER_OF_COLS){
+  def setupChessBoard: Array[Array[Spot]] = {
+    state = Array.ofDim(RowCount, ColCount)
+
+    for(i <- 0 until RowCount){
+      for(j <- 0 until ColCount){
         state(i)(j) = new Spot(i,j)
       }
     }
@@ -47,7 +46,7 @@ class Board{
     state(0)(6).addPiece(new Knight(Color.White))
     state(0)(7).addPiece(new Rook(Color.White))
 
-    for(i <- 0 until NUMBER_OF_COLS){
+    for(i <- 0 until ColCount){
       state(1)(i).addPiece(new Pawn(Color.White))
     }
 
@@ -60,16 +59,17 @@ class Board{
     state(7)(6).addPiece(new Knight(Color.Black))
     state(7)(7).addPiece(new Rook(Color.Black))
 
-    for(i <- 0 until NUMBER_OF_COLS){
+    for(i <- 0 until ColCount){
       state(6)(i).addPiece(new Pawn(Color.Black))
     }
 
+    state
   }
 
-  def copyBoardState(): Array[Array[Spot]] = {
+  def cloneBoardState(): Array[Array[Spot]] = {
     val copyState: Array[Array[Spot]] = Array.ofDim[Spot](8,8)
-    for(i <- 0 until NUMBER_OF_COLS){
-      for(j <- 0 until NUMBER_OF_COLS){
+    for(i <- 0 until ColCount){
+      for(j <- 0 until ColCount){
         copyState(i)(j) = new Spot(i,j)
         if(state(i)(j).isOccupied){
             state(i)(j).piece.pieceType match {
@@ -87,7 +87,7 @@ class Board{
     copyState
   }
 
-  def boardInCheck(state: Array[Array[Spot]], color: Color): Boolean = {
+  def isBoardInCheck(state: Array[Array[Spot]], color: Color): Boolean = {
     var king: (Integer,Integer) = (0,0)
     var inCheck = false
 
@@ -113,7 +113,7 @@ class Board{
     inCheck
   }
 
-  def printBoard(): Unit = {
+  def printChessBoard(): Unit = {
     for(i <- 7 to 0 by -1){
       println()
       print(Console.WHITE +  "   +-----+-----+-----+-----+-----+-----+-----+-----+")
@@ -149,12 +149,12 @@ class Board{
     println(Console.RESET)
   }
 
-  def causesCheck(color: Color, m: Move): Boolean = {
-    val state: Array[Array[Spot]] = copyBoardState()
+  def moveCausesCheck(color: Color, m: Move): Boolean = {
+    val state: Array[Array[Spot]] = cloneBoardState()
     state(m.to._1)(m.to._2) = state(m.from._1)(m.from._2)
     state(m.from._1)(m.from._2) = new Spot(m.from._1,m.from._2)
 
-    if (boardInCheck(state,color)) true
+    if (isBoardInCheck(state,color)) true
     else false
   }
 
@@ -183,11 +183,10 @@ class Board{
 
     if(!state(m.from._1)(m.from._2).piece.isValidMoveSet(state, m)) return false
 
-    if (causesCheck(state(m.from._1)(m.from._2).piece.color, m)) return false
+    if (moveCausesCheck(state(m.from._1)(m.from._2).piece.color, m)) return false
 
     true
   }
-
 
   def movePiece(m: Move): Unit ={
     val spot = state(m.from._1)(m.from._2)
