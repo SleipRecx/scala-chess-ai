@@ -30,9 +30,7 @@ class Search {
     for(d <- 1 to depth){
       firstGuess = alphaBetaSearch(board, d, color)
       transTable += (zHash.hashBoard(board) -> firstGuess)
-      println(generateMoves(board,Color.White).length)
     }
-
     firstGuess
   }
 
