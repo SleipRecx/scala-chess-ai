@@ -1,97 +1,78 @@
 package AI
 
 import java.time.{Duration, LocalTime}
-
 import AI.Helpers.PieceTable
 import AI.Helpers.PieceValues
 import Game.{Board, Move}
 import Game.Helpers.Color.Color
 import Game.Helpers.Type.Type
 import Game.Helpers._
-
 import scala.collection.mutable.ArrayBuffer
 
 class Search {
-  val zHash = new ZHash
-  var transTable: Map[Long, Move] = Map()
 
-  def getAction(board: Board, color: Color) : Move = {
-    val start = LocalTime.now()
-    val move = iterativeDeepening(board,3,color)
-    val end = LocalTime.now()
-    val time = Duration.between(start,end).getSeconds
-    println("The move took " + time + " seconds for the AlphaBeta AI")
-    move
-  }
+  private val zHash = new ZHash
+
+  private def alphaBetaSearch(board: Board, depth: Int, color: Color): Move = {
+
+    def maxPrune(board: Board,depth: Int, alpha: Double, beta: Double): (Double, Move) = {
+      var a: Double = alpha
+
+      if(depth == 0){
+        return (getBasicEvaluation(board), new Move((0,0),(0,0)))
+      }
+      var bestValue = Double.MinValue
+      var bestMove: Move = new Move((0,0),(0,0))
+
+      val moves = generateMoves(board,Color.White)
 
 
-  def iterativeDeepening(board: Board, depth: Int, color: Color): Move = {
-    var firstGuess: Move = null
-    for(d <- 1 to depth){
-      firstGuess = alphaBetaSearch(board, d, color)
-      transTable += (zHash.hashBoard(board) -> firstGuess)
+      for (m <- moves) {
+        val newState = generateSuccessorState(m, board)
+        val value = minPrune(newState, depth - 1, a, beta)._1
+
+        bestValue = Math.max(bestValue,value)
+        a = Math.max(a, bestValue)
+
+        if (value == bestValue) bestMove = m
+        if (bestValue > beta) return (bestValue,m)
+      }
+      (bestValue,bestMove)
     }
-    firstGuess
-  }
 
-  def alphaBetaSearch(board: Board, depth: Int, color: Color): Move = {
+    def minPrune(board: Board, depth: Int, alpha: Double, beta: Double): (Double, Move) ={
+      var b: Double = beta
+
+      if(depth == 0){
+        return (getBasicEvaluation(board), new Move((0,0),(0,0)))
+      }
+
+      var bestValue = Double.MaxValue
+      var bestMove: Move = new Move((0,0),(0,0))
+      val moves = generateMoves(board,Color.Black)
+
+
+      for (m <- moves) {
+        val newState = generateSuccessorState(m, board)
+        val value = maxPrune(newState, depth - 1, alpha, b)._1
+
+        bestValue = Math.min(bestValue,value)
+        b = Math.min(b,bestValue)
+
+        if (value == bestValue) bestMove = m
+        if (alpha > bestValue) return (bestValue,m)
+      }
+      (bestValue,bestMove)
+    }
+
     color match {
       case Color.White => maxPrune(board, depth, Double.MinValue, Double.MaxValue)._2
       case Color.Black => minPrune(board, depth, Double.MinValue, Double.MaxValue)._2
     }
+
   }
 
-  def maxPrune(board: Board,depth: Int, alpha: Double, beta: Double): (Double, Move) = {
-    var a: Double = alpha
-
-    if(depth == 0){
-      return (getBasicEvaluation(board), new Move((0,0),(0,0)))
-    }
-    var bestValue = Double.MinValue
-    var bestMove: Move = new Move((0,0),(0,0))
-
-    val moves = generateMoves(board,Color.White)
-
-
-    for (m <- moves) {
-      val newState = generateSuccessorState(m, board)
-      val value = minPrune(newState, depth - 1, a, beta)._1
-
-      bestValue = Math.max(bestValue,value)
-      a = Math.max(a, bestValue)
-
-      if (value == bestValue) bestMove = m
-      if (bestValue > beta) return (bestValue,m)
-    }
-    (bestValue,bestMove)
-  }
-
-  def minPrune(board: Board, depth: Int, alpha: Double, beta: Double): (Double, Move) ={
-    var b: Double = beta
-
-    if(depth == 0){
-      return (getBasicEvaluation(board), new Move((0,0),(0,0)))
-    }
-
-    var bestValue = Double.MaxValue
-    var bestMove: Move = new Move((0,0),(0,0))
-    val moves = generateMoves(board,Color.Black)
-
-
-    for (m <- moves) {
-      val newState = generateSuccessorState(m, board)
-      val value = maxPrune(newState, depth - 1, alpha, b)._1
-
-      bestValue = Math.min(bestValue,value)
-      b = Math.min(b,bestValue)
-
-      if (value == bestValue) bestMove = m
-      if (alpha > bestValue) return (bestValue,m)
-    }
-    (bestValue,bestMove)
-  }
-
-  def getBasicEvaluation(board: Board): Double = {
+  private def getBasicEvaluation(board: Board): Double = {
     var score = 0
     var wK, bK, wQ, bQ, wR, bR, wB, bB, wN, bN, wP, bP = 0
     val wM = generateMoves(board,Color.White).length
@@ -165,7 +146,7 @@ class Search {
     score
   }
 
-  def countPieces(board: Board, pieceType: Type, color: Color): Int = {
+  private def countPieces(board: Board, pieceType: Type, color: Color): Int = {
     var value: Int = 0
     for(i <- 0 until 8){
       for(j <- 0 until 8){
@@ -179,14 +160,14 @@ class Search {
     value
   }
 
-  def generateSuccessorState(move: Move, board: Board): Board = {
+  private def generateSuccessorState(move: Move, board: Board): Board = {
     val newBoard = new Board()
     newBoard.state = board.cloneBoardState()
     newBoard.movePiece(move)
     newBoard
   }
 
-  def generateMoves(board: Board, color: Color) : ArrayBuffer[Move] = {
+  private def generateMoves(board: Board, color: Color) : ArrayBuffer[Move] = {
 
     val killerMoves = new ArrayBuffer[Move]()
     val validMoves = new ArrayBuffer[Move]()
@@ -203,16 +184,14 @@ class Search {
     killerMoves
   }
 
-
-/*
-  def negaMax(board: Board, depth: Integer, color: Color): (Double,((Integer, Integer), (Integer, Integer))) ={
+  private def negaMax(board: Board, depth: Integer, color: Color): (Double, Move) ={
     if(depth == 0){
       var v = getBasicEvaluation(board)
       if(color == Color.Black) v = -1 * v
-      return (v,((0,0),(0,0)) )
+      return (v, new Move((0,0),(0,0)) )
     }
     var bestValue = Double.MinValue
-    var bestMove: ((Integer,Integer),(Integer,Integer)) = ((0,0),(0,0))
+    var bestMove = new Move((0,0),(0,0))
     val moves = generateMoves(board,color)
     for(m <- moves){
       val newState = generateSuccessorState(m,board)
@@ -227,6 +206,14 @@ class Search {
     }
     (bestValue,bestMove)
   }
-  */
+
+  def getBestMove(board: Board, color: Color) : Move = {
+    val start = LocalTime.now()
+    val move = alphaBetaSearch(board, 3, color)
+    val end = LocalTime.now()
+    val time = Duration.between(start,end).getSeconds
+    println("The move took " + time + " seconds for the AlphaBeta AI")
+    move
+  }
 
 }
