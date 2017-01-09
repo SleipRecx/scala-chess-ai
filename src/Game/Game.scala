@@ -34,10 +34,10 @@ class Game {
     try {
 
       while (true) {
-        val m = ai.getAction(board, Color.White)
+        val m = ai.getBestMove(board, Color.White)
         board.movePiece(m)
         board.printChessBoard()
-        val m2 = ai.getAction(board, Color.Black)
+        val m2 = ai.getBestMove(board, Color.Black)
         board.movePiece(m2)
         board.printChessBoard()
       }
