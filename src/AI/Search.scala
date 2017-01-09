@@ -181,7 +181,7 @@ class Search {
 
   def generateSuccessorState(move: Move, board: Board): Board = {
     val newBoard = new Board()
-    newBoard.state = board.copyBoardState()
+    newBoard.state = board.cloneBoardState()
     newBoard.movePiece(move)
     newBoard
   }
