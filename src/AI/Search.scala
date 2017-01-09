@@ -4,7 +4,7 @@ import java.time.{Duration, LocalTime}
 
 import AI.Helpers.PieceTable
 import AI.Helpers.PieceValues
-import Game.Board
+import Game.{Board, Move}
 import Game.Helpers.Color.Color
 import Game.Helpers.Type.Type
 import Game.Helpers._
@@ -12,10 +12,10 @@ import Game.Helpers._
 import scala.collection.mutable.ArrayBuffer
 
 class Search {
-  val zobrist = new Zobrist
-  var transTable: Map[Long,((Integer, Integer), (Integer, Integer))] = Map()
+  val zHash = new ZHash
+  var transTable: Map[Long, Move] = Map()
 
-  def getAction(board: Board, color: Color) : ((Integer, Integer), (Integer, Integer)) = {
+  def getAction(board: Board, color: Color) : Move = {
     val start = LocalTime.now()
     val move = iterativeDeepening(board,3,color)
     val end = LocalTime.now()
@@ -25,72 +25,68 @@ class Search {
   }
 
 
-  def iterativeDeepening(board: Board, depth: Integer, color: Color): ((Integer, Integer), (Integer, Integer)) = {
-    var firstGuess: ((Integer, Integer), (Integer, Integer)) = null
+  def iterativeDeepening(board: Board, depth: Int, color: Color): Move = {
+    var firstGuess: Move = null
     for(d <- 1 to depth){
-      firstGuess = alphaBetaSearch(board,d,color)
-      transTable += (zobrist.getZobristHash(board) -> firstGuess)
+      firstGuess = alphaBetaSearch(board, d, color)
+      transTable += (zHash.hashBoard(board) -> firstGuess)
     }
     firstGuess
   }
 
-  def alphaBetaSearch(board: Board, depth: Integer, color: Color): ((Integer, Integer), (Integer, Integer)) = {
+  def alphaBetaSearch(board: Board, depth: Int, color: Color): Move = {
     color match {
       case Color.White => maxPrune(board, depth, Double.MinValue, Double.MaxValue)._2
       case Color.Black => minPrune(board, depth, Double.MinValue, Double.MaxValue)._2
     }
   }
 
-  def maxPrune(board: Board,depth: Integer, alpha: Double, beta: Double): (Double,((Integer, Integer), (Integer, Integer))) = {
+  def maxPrune(board: Board,depth: Int, alpha: Double, beta: Double): (Double, Move) = {
     var a: Double = alpha
 
     if(depth == 0){
-      return (getBasicEvaluation(board),((0,0),(0,0)))
+      return (getBasicEvaluation(board), new Move((0,0),(0,0)))
     }
     var bestValue = Double.MinValue
-    var bestMove: ((Integer,Integer),(Integer,Integer)) = ((0,0),(0,0))
+    var bestMove: Move = new Move((0,0),(0,0))
 
-    val moves = generateKillerMoves(board,Color.White)
+    val moves = generateMoves(board,Color.White)
 
 
     for (m <- moves) {
       val newState = generateSuccessorState(m, board)
       val value = minPrune(newState, depth - 1, a, beta)._1
+
       bestValue = Math.max(bestValue,value)
       a = Math.max(a, bestValue)
-      if (value == bestValue) {
-        bestMove = m
-      }
-      if (bestValue > beta) {
-        return (bestValue,m)
-      }
+
+      if (value == bestValue) bestMove = m
+      if (bestValue > beta) return (bestValue,m)
     }
     (bestValue,bestMove)
   }
 
-  def minPrune(board: Board, depth: Integer, alpha: Double, beta: Double): (Double,((Integer, Integer), (Integer, Integer))) ={
+  def minPrune(board: Board, depth: Int, alpha: Double, beta: Double): (Double, Move) ={
     var b: Double = beta
 
     if(depth == 0){
-      return (getBasicEvaluation(board),((0,0),(0,0)))
+      return (getBasicEvaluation(board), new Move((0,0),(0,0)))
     }
 
     var bestValue = Double.MaxValue
-    var bestMove: ((Integer,Integer),(Integer,Integer)) = ((0,0),(0,0))
-    val moves = generateKillerMoves(board,Color.Black)
+    var bestMove: Move = new Move((0,0),(0,0))
+    val moves = generateMoves(board,Color.Black)
 
 
     for (m <- moves) {
       val newState = generateSuccessorState(m, board)
       val value = maxPrune(newState, depth - 1, alpha, b)._1
+
       bestValue = Math.min(bestValue,value)
-      if (value == bestValue) {
-        bestMove = m
-      }
-      if (alpha > bestValue) {
-        return (bestValue,m)
-      }
       b = Math.min(b,bestValue)
+
+      if (value == bestValue) bestMove = m
+      if (alpha > bestValue) return (bestValue,m)
     }
     (bestValue,bestMove)
   }
@@ -169,8 +165,8 @@ class Search {
     score
   }
 
-  def countPieces(board: Board, pieceType: Type, color: Color): Integer = {
-    var value: Integer = 0
+  def countPieces(board: Board, pieceType: Type, color: Color): Int = {
+    var value: Int = 0
     for(i <- 0 until 8){
       for(j <- 0 until 8){
         if(board.state(i)(j).isOccupied){
@@ -183,65 +179,32 @@ class Search {
     value
   }
 
-  def generateSuccessorState(action: ((Integer,Integer),(Integer,Integer)), board: Board): Board = {
+  def generateSuccessorState(move: Move, board: Board): Board = {
     val newBoard = new Board()
     newBoard.state = board.copyBoardState()
-    newBoard.movePiece(action._1,action._2)
-    newBoard.switchTurn()
+    newBoard.movePiece(move)
     newBoard
   }
 
-  def generateKillerMoves(board: Board, color: Color) : ArrayBuffer[((Integer, Integer), (Integer, Integer))] = {
+  def generateMoves(board: Board, color: Color) : ArrayBuffer[Move] = {
 
-    val killerMoves = new ArrayBuffer[((Integer, Integer), (Integer, Integer))]()
-    val validMoves = new ArrayBuffer[((Integer, Integer), (Integer, Integer))]()
+    val killerMoves = new ArrayBuffer[Move]()
+    val validMoves = new ArrayBuffer[Move]()
 
-    for(fromRow <- 0 until 8) {
-      for(fromCol <- 0 until 8) {
-        if (board.state(fromRow)(fromCol).isOccupied){
-          if (board.state(fromRow)(fromCol).piece.color == color) {
-            for(toRow <- 0 until 8) {
-              for(toCol <- 0 until 8) {
-                val from: (Integer,Integer) = (fromRow, fromCol)
-                val to: (Integer,Integer)  = (toRow, toCol)
-                if(board.isLegalMove(from,to)) {
-                  if(board.state(toRow)(toCol).isOccupied) killerMoves.+=((from,to))
-                  else validMoves.+=((from,to))
-                }
-              }
-            }
-          }
-        }
+    board.getAllOccupiedSpotsByColor(color).foreach(s1 => board.getAllSpots.foreach(s2 => {
+      val move = new Move( (s1.cord._1, s1.cord._2), (s2.cord._1, s2.cord._2) )
+      if (board.isLegalMove(move)) {
+        if (s2.isOccupied) killerMoves.+=(move)
+        else validMoves.+=(move)
       }
-    }
+    }))
+
     killerMoves ++= validMoves
     killerMoves
   }
 
-  def generateMoves(board: Board, color: Color) : ArrayBuffer[((Integer, Integer), (Integer, Integer))] = {
-    val validCoordinates = new ArrayBuffer[(Integer, Integer)]()
-    val validMoves = new ArrayBuffer[((Integer, Integer), (Integer, Integer))]()
 
-    for (i <- 0 until 8) {
-      for (j <- 0 until 8) {
-        validCoordinates.+=((i, j))
-      }
-    }
-
-    for (from <- validCoordinates) {
-      if (board.state(from._1)(from._2).isOccupied) {
-        if (board.state(from._1)(from._2).piece.color == color){
-          for (to <- validCoordinates) {
-            if (board.isLegalMove(from,to)) {
-              validMoves.+=((from, to))
-            }
-          }
-        }
-      }
-    }
-    validMoves
-  }
-
+/*
   def negaMax(board: Board, depth: Integer, color: Color): (Double,((Integer, Integer), (Integer, Integer))) ={
     if(depth == 0){
       var v = getBasicEvaluation(board)
@@ -264,5 +227,6 @@ class Search {
     }
     (bestValue,bestMove)
   }
+  */
 
 }

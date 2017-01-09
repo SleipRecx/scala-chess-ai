@@ -5,6 +5,8 @@ import Helpers.Color
 import Helpers.Color.Color
 import Pieces._
 
+import scala.collection.mutable.ArrayBuffer
+
 
 class Board{
 
@@ -12,9 +14,22 @@ class Board{
 
   var state: Array[Array[Spot]] = Array.ofDim[Spot](8, 8)
   var turn: Color = Color.White
+  initBoard()
 
   def switchTurn(): Unit = {
      turn = if(turn == Color.White) Color.Black else Color.White
+  }
+
+  def getAllOccupiedSpotsByColor(c: Color): ArrayBuffer[Spot] = {
+    var spots = ArrayBuffer[Spot]()
+    state.foreach(e1 => e1.foreach(e2 => if(e2.isOccupied) if(e2.piece.color == c) spots += e2))
+    spots
+  }
+
+  def getAllSpots: ArrayBuffer[Spot] = {
+    var spots = ArrayBuffer[Spot]()
+    state.foreach(e1 => e1.foreach(e2 => spots += e2))
+    spots
   }
 
   def initBoard(): Unit = {
@@ -89,7 +104,7 @@ class Board{
     for(i <- state.indices) {
       for (j <- state.indices) {
         if (state(i)(j).isOccupied && state(i)(j).piece.color != color) {
-          if (state(i)(j).piece.isValidMoveSet(state, (i,j), (king._1, king._2))) {
+          if (state(i)(j).piece.isValidMoveSet(state, new Move((i,j),(king._1, king._2)))) {
               inCheck = true
           }
         }
@@ -134,18 +149,16 @@ class Board{
     println(Console.RESET)
   }
 
-  def causesCheck(color: Color, from: (Integer,Integer), to: (Integer,Integer)): Boolean = {
+  def causesCheck(color: Color, m: Move): Boolean = {
     val state: Array[Array[Spot]] = copyBoardState()
-    state(to._1)(to._2) = state(from._1)(from._2)
-    state(from._1)(from._2) = new Spot(from._1,from._2)
-    if(boardInCheck(state,color)){
-      return true
-    }
-    false
+    state(m.to._1)(m.to._2) = state(m.from._1)(m.from._2)
+    state(m.from._1)(m.from._2) = new Spot(m.from._1,m.from._2)
+
+    if (boardInCheck(state,color)) true
+    else false
   }
 
-
-  def getColorFromPiece(from: (Integer, Integer)): Color = {
+  def getColorFromPiece(from: (Int, Int)): Color = {
     if(state(from._1)(from._2).isOccupied){
       state(from._1)(from._2).piece.color
     }
@@ -154,55 +167,39 @@ class Board{
     }
   }
 
-  def isLegalMove(from: (Integer,Integer), to: (Integer,Integer)): Boolean = {
+  def isLegalMove(m: Move): Boolean = {
 
-    if (from._1 == to._1 && from._2 == to._2) {
-      return false
+    if (m.from  == m.to) return false
+
+    if (m.from._1 > 7 || m.from._1 < 0 || m.from._2 > 7 || m.from._2 < 0) return false
+
+    if (m.to._1 > 7 || m.to._1 < 0 || m.to._2 > 7 || m.to._2 < 0) return false
+
+    if (!state(m.from._1)(m.from._2).isOccupied) return false
+
+    if (state(m.to._1)(m.to._2).isOccupied) {
+      if (state(m.from._1)(m.from._2).piece.color == state(m.to._1)(m.to._2).piece.color) return false
     }
 
-    if (to._1 > 7 || to._2 > 7 || to._1 < 0 || to._2 < 0) {
-      return false
-    }
+    if(!state(m.from._1)(m.from._2).piece.isValidMoveSet(state, m)) return false
 
-    if(!state(from._1)(from._2).isOccupied){
-    }
-
-    else{
-      if(state(to._1)(to._2).isOccupied){
-        if (state(from._1)(from._2).piece.color == state(to._1)(to._2).piece.color) {
-          return false
-        }
-      }
-    }
-
-    if(!state(from._1)(from._2).piece.isValidMoveSet(state,from,to)){
-      return false
-    }
-
-    if (causesCheck(state(from._1)(from._2).piece.color,from,to)) {
-      return false
-    }
+    if (causesCheck(state(m.from._1)(m.from._2).piece.color, m)) return false
 
     true
   }
 
 
-  def movePiece(from: (Integer,Integer), to: (Integer,Integer)): Unit ={
-    val spot = state(from._1)(from._2)
-    val newSpot = state(to._1)(to._2)
+  def movePiece(m: Move): Unit ={
+    val spot = state(m.from._1)(m.from._2)
+    val newSpot = state(m.to._1)(m.to._2)
 
-    if(!isLegalMove(from,to)){
-      throw new IllegalArgumentException("Not a legal move")
-    }
+    if(!isLegalMove(m)) throw new IllegalArgumentException("Not a legal move")
 
     newSpot.addPiece(spot.piece)
-    spot.piece._moved = true
+    spot.piece.moved = true
     spot.removePiece()
+
     switchTurn()
   }
-
-
-
-
 
 }
