@@ -56,14 +56,12 @@ class Search {
     for (m <- moves) {
       val newState = generateSuccessorState(m, board)
       val value = minPrune(newState, depth - 1, a, beta)._1
+
       bestValue = Math.max(bestValue,value)
       a = Math.max(a, bestValue)
-      if (value == bestValue) {
-        bestMove = m
-      }
-      if (bestValue > beta) {
-        return (bestValue,m)
-      }
+
+      if (value == bestValue) bestMove = m
+      if (bestValue > beta) return (bestValue,m)
     }
     (bestValue,bestMove)
   }
@@ -83,14 +81,12 @@ class Search {
     for (m <- moves) {
       val newState = generateSuccessorState(m, board)
       val value = maxPrune(newState, depth - 1, alpha, b)._1
+
       bestValue = Math.min(bestValue,value)
-      if (value == bestValue) {
-        bestMove = m
-      }
-      if (alpha > bestValue) {
-        return (bestValue,m)
-      }
       b = Math.min(b,bestValue)
+
+      if (value == bestValue) bestMove = m
+      if (alpha > bestValue) return (bestValue,m)
     }
     (bestValue,bestMove)
   }
@@ -187,11 +183,8 @@ class Search {
     val newBoard = new Board()
     newBoard.state = board.copyBoardState()
     newBoard.movePiece(move)
-    newBoard.switchTurn()
     newBoard
   }
-
-
 
   def generateMoves(board: Board, color: Color) : ArrayBuffer[Move] = {
 
