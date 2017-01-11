@@ -11,6 +11,15 @@ import scala.collection.mutable.ArrayBuffer
 
 class Search {
 
+  def getBestMove(board: Board, color: Color) : Move = {
+    val start = LocalTime.now()
+    val move = alphaBetaSearch(board, 3, color)
+    val end = LocalTime.now()
+    val time = Duration.between(start,end).getSeconds
+    println("The move took " + time + " seconds for the AlphaBeta AI")
+    move
+  }
+
   private def alphaBetaSearch(board: Board, depth: Int, color: Color): Move = {
 
     def maxPrune(board: Board,depth: Int, alpha: Double, beta: Double): (Double, Move) = {
@@ -144,20 +153,6 @@ class Search {
     score
   }
 
-  private def countPieces(board: Board, pieceType: Type, color: Color): Int = {
-    var value: Int = 0
-    for(i <- 0 until 8){
-      for(j <- 0 until 8){
-        if(board.state(i)(j).isOccupied){
-          if(board.state(i)(j).piece.pieceType == pieceType && board.state(i)(j).piece.color == color){
-            value += 1
-          }
-        }
-      }
-    }
-    value
-  }
-
   private def generateSuccessorState(move: Move, board: Board): Board = {
     val newBoard = new Board()
     newBoard.state = board.cloneBoardState()
@@ -182,6 +177,20 @@ class Search {
     killerMoves
   }
 
+  private def countPieces(board: Board, pieceType: Type, color: Color): Int = {
+    var value: Int = 0
+    for(i <- 0 until 8){
+      for(j <- 0 until 8){
+        if(board.state(i)(j).isOccupied){
+          if(board.state(i)(j).piece.pieceType == pieceType && board.state(i)(j).piece.color == color){
+            value += 1
+          }
+        }
+      }
+    }
+    value
+  }
+
   private def negaMax(board: Board, depth: Integer, color: Color): (Double, Move) ={
     if(depth == 0){
       var v = getBasicEvaluation(board)
@@ -203,15 +212,6 @@ class Search {
       }
     }
     (bestValue,bestMove)
-  }
-
-  def getBestMove(board: Board, color: Color) : Move = {
-    val start = LocalTime.now()
-    val move = alphaBetaSearch(board, 3, color)
-    val end = LocalTime.now()
-    val time = Duration.between(start,end).getSeconds
-    println("The move took " + time + " seconds for the AlphaBeta AI")
-    move
   }
 
 }

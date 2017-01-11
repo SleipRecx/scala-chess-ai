@@ -45,9 +45,9 @@ class Game {
     */
 
     val start = LocalTime.now()
-    val m = ai.getAction(board,Color.White)
+    val m = ai.getBestMove(board,Color.White)
     board.movePiece(m)
-    board.printBoard()
+    board.printChessBoard()
     val end = LocalTime.now()
     val time = Duration.between(start,end).getSeconds
     println("The Game took " + time + " seconds")
@@ -63,10 +63,10 @@ class Game {
         val y2 = translation(move(1).charAt(0))
         val brusj = new Move((x1,y1),(x2,y2))
         board.movePiece(brusj)
-        board.printBoard()
-        val m = ai.getAction(board, Color.White)
+        board.printChessBoard()
+        val m = ai.getBestMove(board, Color.White)
         board.movePiece(m)
-        board.printBoard()
+        board.printChessBoard()
 
       }
       catch{
