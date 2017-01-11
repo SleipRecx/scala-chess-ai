@@ -1,6 +1,7 @@
-## History
+## Milestones
 
 05.01.2017 - Beat Stockfish level 1
+10.01.2017 - Beat Cornelius Dahling (Norwegian chess player)
 
 
 ## Game
@@ -13,6 +14,7 @@
 - [ ] Promoting Pawns
 - [ ] Casteling Logic
 - [ ] En Passant
+- [ ] Three move equals draw
 
 
 ## Artificial Intelligence
@@ -36,6 +38,7 @@
 - [x] Piece Value
 - [x] Mobility Score
 - [x] Piece Square Tables
+- [ ] Draw Detection
 - [ ] End Game Square Tables
 - [ ] Pawn Structure
 - [ ] King Safety
