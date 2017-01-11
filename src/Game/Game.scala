@@ -8,12 +8,11 @@ import Helpers.Color
 import Helpers.Color.Color
 
 class Game {
-  val board = new Board()
-  val ai = new Search()
-  board.initBoard()
+
+  val board = new Board
+  val ai = new Search
 
   val translation = Map('a' -> 0, 'b' -> 1,'c' -> 2, 'd' -> 3,'e' -> 4, 'f' -> 5, 'g' -> 6,'h' -> 7)
-
 
   var turn: Color = Color.Black
 
@@ -32,12 +31,12 @@ class Game {
     try {
 
       while (true) {
-        val m = ai.getAction(board, Color.White)
+        val m = ai.getBestMove(board, Color.White)
         board.movePiece(m)
-        board.printBoard()
-        val m2 = ai.getAction(board, Color.Black)
+        board.printChessBoard()
+        val m2 = ai.getBestMove(board, Color.Black)
         board.movePiece(m2)
-        board.printBoard()
+        board.printChessBoard()
       }
     }
     catch{
