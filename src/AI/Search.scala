@@ -11,8 +11,6 @@ import scala.collection.mutable.ArrayBuffer
 
 class Search {
 
-  private val zHash = new ZHash
-
   private def alphaBetaSearch(board: Board, depth: Int, color: Color): Move = {
 
     def maxPrune(board: Board,depth: Int, alpha: Double, beta: Double): (Double, Move) = {
