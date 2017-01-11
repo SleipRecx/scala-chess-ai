@@ -21,7 +21,7 @@
 - [x] Move Generation
 - [x] Adversial Search (MinMax)
 - [x] Alpha Beta Improvement
-- [x] Iterative Deepening
+- [ ] Iterative Deepening
 - [ ] Time Management
 - [ ] Transposition Tables
 - [ ] Principle Variation Search
