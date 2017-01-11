@@ -15,7 +15,7 @@
 - [x] Promoting Pawns (only queen)
 - [ ] Casteling Logic
 - [ ] En Passant
-- [ ] Three move equals draw
+- [ ] Three Move = Draw
 
 
 ## Artificial Intelligence
