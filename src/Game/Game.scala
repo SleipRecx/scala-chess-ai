@@ -27,11 +27,8 @@ class Game {
   }
 
   def startGame(): Unit ={
-    val start = LocalTime.now()
 
-   /* val m = ai.getAction(board,Color.White)
-    board.movePiece(m._1,m._2)
-    board.printBoard()*/
+    /*
     try {
 
       while (true) {
@@ -46,30 +43,31 @@ class Game {
     catch{
       case e: Exception => println(e.printStackTrace())
     }
+    */
 
+    val start = LocalTime.now()
+    val m = ai.getAction(board,Color.White)
+    board.movePiece(m)
+    board.printBoard()
     val end = LocalTime.now()
     val time = Duration.between(start,end).getSeconds
     println("The Game took " + time + " seconds")
 
-    /*
     while(true){
       val myScanner = new Scanner(System.in)
       val move = myScanner.nextLine().split(" ")
-      val from = (Integer.valueOf(Integer.parseInt(move(0).charAt(1) + "") - 1 ),Integer.valueOf(translation(move(0).charAt(0))))
-      val to = (Integer.valueOf(Integer.parseInt(move(1).charAt(1) + "") - 1 ),Integer.valueOf(translation(move(1).charAt(0))))
-      try {
-        val player = board.getColorFromPiece(from)
-        if(player == turn){
-          board.movePiece(from, to)
-          board.printBoard()
-          val m = ai.getAction(board, Color.White)
-          board.movePiece(m._1,m._2)
-          board.printBoard()
 
-        }
-        else{
-          println("You can't move your opponents pieces")
-        }
+      try {
+        val x1 = move(0).charAt(1).asDigit - 1
+        val y1 = translation(move(0).charAt(0))
+        val x2 = move(1).charAt(1).asDigit - 1
+        val y2 = translation(move(1).charAt(0))
+        val brusj = new Move((x1,y1),(x2,y2))
+        board.movePiece(brusj)
+        board.printBoard()
+        val m = ai.getAction(board, Color.White)
+        board.movePiece(m)
+        board.printBoard()
 
       }
       catch{
@@ -77,7 +75,6 @@ class Game {
         case e: Exception => println(e.printStackTrace())
       }
     }
-    */
 
   }
 
