@@ -12,7 +12,7 @@
 - [x] Pieces
 - [x] Pseudo-Legal Moves
 - [x] Legal Moves
-- [ ] Promoting Pawns
+- [x] Promoting Pawns (only queen)
 - [ ] Casteling Logic
 - [ ] En Passant
 - [ ] Three move equals draw
