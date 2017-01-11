@@ -1,6 +1,7 @@
 package Game
 
-import Pieces.Piece
+import Game.Helpers.{Color, Type}
+import Pieces.{Piece, Queen}
 
 class Spot(c: (Int,Int)) {
 
@@ -8,8 +9,14 @@ class Spot(c: (Int,Int)) {
 
   def cord: (Int,Int) = this.c
 
-  def addPiece(piece: Piece): Unit = {
-    this.piece = piece
+  def addPiece(p: Piece): Unit = {
+    if(p.pieceType == Type.Pawn){
+      if ((c._1 == 7 && p.color == Color.White) || (c._1 == 0 && p.color == Color.Black)){
+        this.piece = new Queen(p.color)
+        return
+      }
+    }
+    this.piece = p
   }
 
   def removePiece(): Unit ={
