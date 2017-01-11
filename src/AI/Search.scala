@@ -17,7 +17,7 @@ class Search {
 
   def getAction(board: Board, color: Color) : Move = {
     val start = LocalTime.now()
-    val move = iterativeDeepening(board,3,color)
+    val move = iterativeDeepening(board,4,color)
     val end = LocalTime.now()
     val time = Duration.between(start,end).getSeconds
     println("The move took " + time + " seconds for the AlphaBeta AI")
